@@ -32,8 +32,9 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
     static let shared = AgillicMobileSDK()
     
     private override init() {
-
+        super.init()
     }
+    
     /**
      Configure the AgillicMobileSDK Instance with values from your Agillic solutions.
 
