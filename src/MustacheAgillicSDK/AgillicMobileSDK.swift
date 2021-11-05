@@ -17,7 +17,7 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
     private var auth: Auth? = nil;
     private var methodType : SPRequestOptions = .post
     private var protocolType : SPProtocol = .https
-    private(set) public var tracker: AgillicTracker
+    private(set) public var tracker: AgillicTracker? = nil
     private var clientAppId: String? = nil
     private var clientAppVersion: String? = nil
     private var solutionId : String? = nil
