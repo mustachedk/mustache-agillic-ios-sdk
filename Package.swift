@@ -11,6 +11,9 @@ let package = Package(
    .package(url: "https://github.com/snowplow/snowplow-objc-tracker", .upToNextMajor(from: "1.3.0"))
  ],
   targets: [
-    .target(name: "MustacheAgillicSDK", dependencies: ["MustacheFoundation", "SnowplowTracker"])
+    .target(
+        name: "MustacheAgillicSDK",
+        dependencies: ["SnowplowTracker"],
+        path: "Sources")
   ]
 )

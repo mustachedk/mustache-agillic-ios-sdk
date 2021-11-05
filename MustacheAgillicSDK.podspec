@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'MustacheAgillicSDK'
-  s.version          = '0.1.0'
+  s.version          = '1.0.0'
   s.summary          = 'Mustache Agillic SDK for iOS'
   s.homepage         = 'https://github.com/mustachedk/mustache-agillic-ios-sdk'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '11.0'
 
-  s.source_files = 'sources/*'
+  s.source_files = 'Sources/*'
 
   s.frameworks = 'UIFoundation'
 
