@@ -29,10 +29,14 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
     /**
     Returns a global instance of AgillicMobileSDK, it needs to be configured in other to be used.
      */
-    static let shared = AgillicMobileSDK()
+    static let instance = AgillicMobileSDK()
     
     private override init() {
         super.init()
+    }
+    
+    class func shared() -> AgillicMobileSDK {
+        return AgillicMobileSDK.instance
     }
     
     /**
@@ -160,6 +164,11 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
         
         guard let clientAppId = self.clientAppId, let clientAppVersion = self.clientAppVersion else {
             completion!(nil, NSError(domain: "configuration error", code: -1, userInfo: ["message" : "configuration not set"]))
+            return
+        }
+        
+        guard let tracker = self.tracker else {
+            completion!(nil, NSError(domain: "tracker", code: -1, userInfo: ["message" : "tracker not configrued"]))
             return
         }
 
