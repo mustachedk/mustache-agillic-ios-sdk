@@ -44,7 +44,7 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
         self.solutionId = solutionId
     }
     
-    private static var sharedAgillicMobileSDK: AgillicMobileSDK = {
+    public static var sharedAgillicMobileSDK: AgillicMobileSDK = {
         let sharedInstance = AgillicMobileSDK()
         return sharedInstance
     }()
@@ -67,8 +67,7 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
         super.init()
         setAPI("");
     }
-    
-    
+        
     private func setDevAPI() {
         setAPI("dev");
     }
