@@ -63,7 +63,7 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
         registrationEndpoint = String(format: urlFormat, api );
     }
     
-    private override init() {
+    public override init() {
         super.init()
         setAPI("");
     }
