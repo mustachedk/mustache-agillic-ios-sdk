@@ -17,23 +17,38 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
     private var auth: Auth? = nil;
     private var methodType : SPRequestOptions = .post
     private var protocolType : SPProtocol = .https
-    private var tracker: SPTracker?
+    private(set) public var tracker: AgillicTracker
     private var clientAppId: String = "N/A"
     private var clientAppVersion: String = "N/A"
     private var solutionId : String? = nil
     private var pushNotificationToken: String?
     private var registrationEndpoint: String?
-    private var userId: String?
+    private var recipientId: String?
     private var count = 0
     private var requestCallback : AgillicRequestCallback? = nil
-    public func setAuth(_ auth: Auth) {
-        self.auth = auth;
+    public func configure(apiKey: String, apiSecret: String, clientAppId: String, clientAppVersion: String, solutionId: String) {
+        self.auth = BasicAuth(user: apiKey, password: apiSecret);
+        self.clientAppId = clientAppId
+        self.clientAppVersion = clientAppVersion
+        self.solutionId = solutionId
     }
+    
+    private static var sharedAgillicMobileSDK: AgillicMobileSDK = {
+        let sharedInstance = AgillicMobileSDK()
+
+        return sharedInstance
+    }()
+
+    // MARK: - Accessors
+
+    class func shared() -> AgillicMobileSDK {
+        return sharedAgillicMobileSDK
+    }
+    
     
     public func setAPI(_ api: String) {
         registrationEndpoint = String(format: urlFormat, api );
     }
-
     
     public override init() {
         super.init()
@@ -80,7 +95,7 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
         requestCallback = callback;
     }
 
-    public func getTracker(_ url: String, method: SPRequestOptions, userId: String, appId: String) -> SPTracker {
+    public func getTracker(_ url: String, method: SPRequestOptions, recipientId: String, solutionId: String) -> SPTracker {
         let emitter = SPEmitter.build({ (builder : SPEmitterBuilder?) -> Void in
             builder!.setUrlEndpoint(url)
             builder!.setHttpMethod(method)
@@ -91,11 +106,10 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
             builder!.setByteLimitPost(52000)
         })
         let subject = SPSubject(platformContext: true, andGeoContext: true)
-        subject!.setUserId(userId)
+        subject!.setUserId(recipientId)
         let newTracker = SPTracker.build({ (builder : SPTrackerBuilder?) -> Void in
             builder!.setEmitter(emitter)
-            builder!.setAppId(appId)
-            //builder!.setTrackerNamespace(self.kNamespace)
+            builder!.setAppId(solutionId)
             builder!.setBase64Encoded(false)
             builder!.setSessionContext(true)
             builder!.setSubject(subject)
@@ -109,37 +123,36 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
         return newTracker!
     }
 
-    public func register(apiKey: String, apiSecret: String,
-                         clientAppId: String, clientAppVersion: String,
-                         solutionId: String, userID: String,
-                         pushNotificationToken: String?,
-                         completionHandler: ((String? , Error?) -> Void)?) -> AgillicTracker
-    {
-        setAuth(BasicAuth(user: apiKey, password: apiSecret));
-        return register(clientAppId: clientAppId, clientAppVersion: clientAppVersion, solutionId: solutionId, userID: userID, pushNotificationToken: pushNotificationToken, completionHandler: completionHandler)
-    }
+//    public func register(apiKey: String, apiSecret: String,
+//                         clientAppId: String, clientAppVersion: String,
+//                         solutionId: String, userID: String,
+//                         pushNotificationToken: String?,
+//                         completionHandler: ((String? , Error?) -> Void)?)
+//    {
+//        self.auth = BasicAuth(user: apiKey, password: apiSecret);
+//        return register(clientAppId: clientAppId, clientAppVersion: clientAppVersion, solutionId: solutionId, userID: userID, pushNotificationToken: pushNotificationToken, completionHandler: completionHandler)
+//    }
 
 
-    public func register(clientAppId: String, clientAppVersion: String,
-                  solutionId: String, userID: String,
+    public func register(recipientId: String,
                   pushNotificationToken: String?,
-                  completionHandler: ((String? , Error?) -> Void)?) -> AgillicTracker
+                  completionHandler: ((String? , Error?) -> Void)?)
     {
-        self.clientAppId = clientAppId
-        self.clientAppVersion = clientAppVersion
-        self.solutionId = solutionId
-        self.userId = userID
+        self.recipientId = recipientId
         self.pushNotificationToken = pushNotificationToken
+    
+        guard let solutionId = self.solutionId else {
+            completionHandler!(nil, NSError(domain: "configuration error", code: -1, userInfo: ["message" : "configuration not set"]))
+            return
+        }
 
-        tracker = getTracker(collectorEndpoint, method: methodType, userId: userID, appId: solutionId)
-        let agiTracker = AgillicTracker(tracker!);
+        let spTracker = getTracker(collectorEndpoint, method: methodType, recipientId: recipientId, solutionId: solutionId)
+        self.tracker = AgillicTracker(spTracker);
         createMobileRegistration(completionHandler)
-        return agiTracker;
-        
     }
     
     func createMobileRegistration(_ completion: ((String?, Error?) -> Void)?) {
-        let fullRegistrationUrl = String(format: "%@/register/%@", self.registrationEndpoint!, self.userId!)
+        let fullRegistrationUrl = String(format: "%@/register/%@", self.registrationEndpoint!, self.recipientId!)
         guard let endpointUrl = URL(string: fullRegistrationUrl) else {
             NSLog("Failed to create registration URL %@", fullRegistrationUrl);
             guard completion != nil else {
@@ -150,7 +163,7 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
         }
         
         // Make JSON to send to send to server
-        let json : [String:String] = ["appInstallationId": tracker!.getSessionUserId(),
+        let json : [String:String] = ["appInstallationId": tracker.getSPTracker().getSessionUserId(),
                                       "clientAppId": self.clientAppId,
                                       "clientAppVersion": self.clientAppVersion,
                                       "osName" : SPUtilities.getOSType(),
