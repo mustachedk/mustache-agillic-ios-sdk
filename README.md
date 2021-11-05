@@ -14,13 +14,28 @@ Or dive into the [Developer portal](https://developers.agillic.com).
 ## Installation
 
 See the subsections below for details about the different installation methods.
-1. [Swift Package Manager](SwiftPackageManager.md)
+1. [Swift Package Manager](docs/SwiftPackageManager.md)
 1. [Standard pod install](README.md#standard-pod-install)
-1. [Installing from the GitHub repo](README.md#installing-from-github)
+1. [Installing manually from the GitHub repo](README.md#manually-from-github)
 
-### Swift Package Manager
+### Standard pod install
 
+The Agillic SDK is available through [CocoaPods](https://cocoapods.org). 
+To install it, simply add the following line to your Podfile:
 
+```ruby
+pod 'MustacheAgillicSDK'
+```
+
+### Manually from github
+
+Download/clone this https://github.com/Nets-mobile-acceptance/Netaxept-iOS-SDK.git
+Unzip PiaSDKFramework.zip to obtain Pia.framework.
+Drag and drop Pia.framework to your project.
+Go to your project target at Build Phases.
+Add Pia.framework to Link Binary With Libraries.
+Add Pia.framework to Embedded Binaries from the General tab.
+Xcode 11+ users can now replace Pia.framework in Xcode-Targets Frameworks, Libraries and Embedded Contents with Pia.XCFramework for iOS and iOS Simulator architectures.
 
 ## Using the Agillic SDK
 
