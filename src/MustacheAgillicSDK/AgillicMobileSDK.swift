@@ -44,29 +44,31 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
         self.solutionId = solutionId
     }
     
-    public static var sharedAgillicMobileSDK: AgillicMobileSDK = {
-        let sharedInstance = AgillicMobileSDK()
-        return sharedInstance
-    }()
+    static let shared = AgillicMobileSDK()
 
-    // MARK: - Accessors
+    
+//    private static var sharedAgillicMobileSDK: AgillicMobileSDK = {
+//        let sharedInstance = AgillicMobileSDK()
+//
+//        return sharedInstance
+//    }()
 
     /**
     Returns a global instance of AgillicMobileSDK, it needs to be configured in other to be used.
      */
-    class func shared() -> AgillicMobileSDK {
-        return sharedAgillicMobileSDK
-    }
+//    class func shared() -> AgillicMobileSDK {
+//        return sharedAgillicMobileSDK
+//    }
     
-    
-    private func setAPI(_ api: String) {
-        registrationEndpoint = String(format: urlFormat, api );
-    }
-    
-    public override init() {
+    private override init() {
         super.init()
         setAPI("");
     }
+    
+    private func setAPI(_ api: String) {
+        registrationEndpoint = String(format: urlFormat, api);
+    }
+    
         
     private func setDevAPI() {
         setAPI("dev");
