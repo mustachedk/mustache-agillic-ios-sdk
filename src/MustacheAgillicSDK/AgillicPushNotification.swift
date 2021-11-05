@@ -8,7 +8,7 @@
 import Foundation
 import SnowplowTracker
 
-private class AgillicPushNotification : AgillicEvent {
+public class AgillicPushNotification : AgillicEvent {
     var screenId: String
     var screenName: String
     var type: String?

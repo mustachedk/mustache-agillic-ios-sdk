@@ -8,7 +8,7 @@
 import Foundation
 import SnowplowTracker
 
-public class AgillicTracker : NSObject {
+public class AgillicTracker {
     var tracker: SPTracker
     var enabled = true
 
