@@ -22,10 +22,10 @@ class MyClass {
         AgillicMobileSDK.shared().configure(apiKey: apiKey, apiSecret: apiSecret, solutionId: solutionId)
         
         // Register without PushToken
-        AgillicMobileSDK.shared().register(recipientId: recipientId, completionHandler: nil)
+        AgillicMobileSDK.shared().register(recipientId: recipientId)
         
         // Register with PushToken
-        AgillicMobileSDK.shared().register(recipientId: recipientId, pushNotificationToken: pushToken, completionHandler: nil)
+        AgillicMobileSDK.shared().register(recipientId: recipientId, pushNotificationToken: pushToken)
 
         // Example of AppView tracking
         let appView = AgillicAppViewEvent(screenName: "app/landingpage")

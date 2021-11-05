@@ -155,7 +155,7 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
      */
     public func register(recipientId: String,
                   pushNotificationToken: String? = nil,
-                  completionHandler: ((String? , Error?) -> Void)?)
+                  completionHandler: ((String? , Error?) -> Void)? = nil)
     {
         self.recipientId = recipientId
         self.pushNotificationToken = pushNotificationToken

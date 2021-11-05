@@ -67,9 +67,3 @@ array of that target:
   ]
 ),
 ```
-
-## Questions and Issues
-
-Please provide any feedback via a [GitHub
-Issue](https://github.com/mustachedk/mustache-agillic-ios-sdk/issues/new).
-

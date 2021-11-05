@@ -1,4 +1,4 @@
-# Setting up the Agillic Solution
+# Configuration of the Agillic Solution
 
 ## Introduction
 
