@@ -10,7 +10,7 @@ import SnowplowTracker
 
 typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
 
-public class AgillicMobileSDK : SPRequestCallback {
+public class AgillicMobileSDK : NSObject, SPRequestCallback {
     
     private let registrationEndpoint = "https://api%@-eu1.agillic.net";
     private var snowplowEndpoint = "snowplowtrack-eu1.agillic.net";

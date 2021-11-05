@@ -10,6 +10,10 @@ The SDK currently includes the following functionality:
 Read more about the Agillic Platform on the [official Agillic website](https://agillic.com).
 And in our [Developer portal](https://developers.agillic.com).
 
+## Requirements
+
+- Requires iOS 11
+
 ## Installation
 
 See the subsections below for details about the different installation methods.

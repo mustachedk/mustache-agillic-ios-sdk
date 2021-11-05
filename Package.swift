@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
   name: "MustacheAgillicSDK",
-  platforms: [.iOS(.v11), .macOS(.v10_12), .tvOS(.v11), .watchOS(.v3)],
+  platforms: [.iOS(.v11)],
   products: [
     .library(name: "MustacheAgillicSDK", targets: ["MustacheAgillicSDK"]),
   ],
