@@ -14,6 +14,6 @@ let package = Package(
     .target(
         name: "MustacheAgillicSDK",
         dependencies: ["SnowplowTracker"],
-        path: "Sources")
+        path: "src/MustacheAgillicSDK")
   ]
 )
