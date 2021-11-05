@@ -10,24 +10,24 @@ class MyClass {
     func exmample() {
         
         // Agillic Configuration Variables
-        let key = "YOUR API KEY" // Agillic API Key
-        let secret = "YOUR API SECRET" // Agillic API Secret
+        let apiKey = "YOUR API KEY" // Agillic API Key
+        let apiSecret = "YOUR API SECRET" // Agillic API Secret
         let solutionId = "YOUR SOLUTION ID" // Agillic Solution ID
-        let clientAppId = "APP BUNDLE ID" // App Bundle ID
-        let clientVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
-
+        
         // Other variable, specific for your App
-        let recipientId = "fl@mustache.dk" // User Identifier (email, memberID or the ID created for the Reciept)
-        var pushToken = "" // Push Token
+        let recipientId = "RECIPIENT EMAIL" // Has to match RECIPIENT.EMAIL in the Agillic Recipient Table
+        var pushToken = "000000-0000-0000-0000000" // Push Token of this Device
 
+        // Initialize and configuration
+        AgillicMobileSDK.shared().configure(apiKey: apiKey, apiSecret: apiSecret, solutionId: solutionId)
         
-        AgillicMobileSDK.shared().configure(apiKey: "YOUR API KEY", apiSecret: "YOUR API SECRET")
+        // Register without PushToken
+        AgillicMobileSDK.shared().register(recipientId: recipientId, completionHandler: nil)
         
-        AgillicMobileSDK.shared().configure(apiKey: <#T##String#>, apiSecret: <#T##String#>, clientAppId: <#T##String#>, clientAppVersion: <#T##String#>, solutionId: <#T##String#>)
-        
-        AgillicMobileSDK.shared().register(
-            clientAppId: "CLIENT APP ID", clientAppVersion: "CLIENT APP VERSION", solutionId: "SOLUTION ID", userID: "RECIPIENT ID", pushNotificationToken: "PUSH TOKEN IF ANY", completionHandler: nil)
-        
+        // Register with PushToken
+        AgillicMobileSDK.shared().register(recipientId: recipientId, pushNotificationToken: pushToken, completionHandler: nil)
+
+        // Example of AppView tracking
         let appView = AgillicAppViewEvent(screenName: "app/landingpage")
         AgillicMobileSDK.shared().tracker.track(appView)
         

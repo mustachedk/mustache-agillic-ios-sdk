@@ -18,53 +18,66 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
     private var methodType : SPRequestOptions = .post
     private var protocolType : SPProtocol = .https
     private(set) public var tracker: AgillicTracker
-    private var clientAppId: String = "N/A"
-    private var clientAppVersion: String = "N/A"
+    private var clientAppId: String? = nil
+    private var clientAppVersion: String? = nil
     private var solutionId : String? = nil
     private var pushNotificationToken: String?
     private var registrationEndpoint: String?
     private var recipientId: String?
     private var count = 0
     private var requestCallback : AgillicRequestCallback? = nil
-    public func configure(apiKey: String, apiSecret: String, clientAppId: String, clientAppVersion: String, solutionId: String) {
+    
+    
+    /**
+     Configure the AgillicMobileSDK Instance with values from your Agillic solutions.
+
+     - Parameter apiKey: Your personal Agillic API Key
+     - Parameter apiSecret: Your personal Agillic API Key
+     - Parameter solutionId: Your personal Agillic Solution ID
+    
+     All values can be obtained in your Agillic Solution, see Agillic documention how to obtain these values.
+     */
+    public func configure(apiKey: String, apiSecret: String, solutionId: String) {
         self.auth = BasicAuth(user: apiKey, password: apiSecret);
-        self.clientAppId = clientAppId
-        self.clientAppVersion = clientAppVersion
+        self.clientAppId = Bundle.main.bundleIdentifier
+        self.clientAppVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
         self.solutionId = solutionId
     }
     
     private static var sharedAgillicMobileSDK: AgillicMobileSDK = {
         let sharedInstance = AgillicMobileSDK()
-
         return sharedInstance
     }()
 
     // MARK: - Accessors
 
+    /**
+    Returns a global instance of AgillicMobileSDK, it needs to be configured in other to be used.
+     */
     class func shared() -> AgillicMobileSDK {
         return sharedAgillicMobileSDK
     }
     
     
-    public func setAPI(_ api: String) {
+    private func setAPI(_ api: String) {
         registrationEndpoint = String(format: urlFormat, api );
     }
     
-    public override init() {
+    private override init() {
         super.init()
         setAPI("");
     }
     
     
-    public func setDevAPI() {
+    private func setDevAPI() {
         setAPI("dev");
     }
 
-    public func setTestAPI() {
+    private func setTestAPI() {
         setAPI("test");
     }
     
-    public func setCollectorEndpoint(_ urlString: String) -> Bool{
+    private func setCollectorEndpoint(_ urlString: String) -> Bool{
         guard let url = URL(string: urlString) else {
             return false;
         }
@@ -87,15 +100,15 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
     }
 
     /* Default is POST but can be overrided to GET */
-    public func usePostProtocol(_ usePost: Bool) {
+    private func usePostProtocol(_ usePost: Bool) {
         methodType = usePost == true ? .post : .get
     }
 
-    public func setRequestCallback(_ callback: AgillicRequestCallback) {
+    private func setRequestCallback(_ callback: AgillicRequestCallback) {
         requestCallback = callback;
     }
 
-    public func getTracker(_ url: String, method: SPRequestOptions, recipientId: String, solutionId: String) -> SPTracker {
+    private func getTracker(_ url: String, method: SPRequestOptions, recipientId: String, solutionId: String) -> SPTracker {
         let emitter = SPEmitter.build({ (builder : SPEmitterBuilder?) -> Void in
             builder!.setUrlEndpoint(url)
             builder!.setHttpMethod(method)
@@ -123,26 +136,32 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
         return newTracker!
     }
 
-//    public func register(apiKey: String, apiSecret: String,
-//                         clientAppId: String, clientAppVersion: String,
-//                         solutionId: String, userID: String,
-//                         pushNotificationToken: String?,
-//                         completionHandler: ((String? , Error?) -> Void)?)
-//    {
-//        self.auth = BasicAuth(user: apiKey, password: apiSecret);
-//        return register(clientAppId: clientAppId, clientAppVersion: clientAppVersion, solutionId: solutionId, userID: userID, pushNotificationToken: pushNotificationToken, completionHandler: completionHandler)
-//    }
+    /**
+     Register this app installation into the Agillic solutiion.
+     Crate a new entry in the AGILLIC_REGISTRAION OTM Table in Recipient doesn't already have a Regration.
+     
+     - precondition: AgillicMobileSDK.shared().configure(:) must be called prior to this.
+     - precondition: Recipient needs to exist in the Agillic Solution to in order successfully register installation
 
-
+     - Parameter recipientId: This is mapped to the Recipient.Email in the Agillic Solution.
+     - Parameter pushNotificationToken: No description
+     - Parameter completionHandler: success/failure callback
+    
+     - Throws: Error code: 1001 - solutionID missing
+    Error code: 1002 - recipientId missing
+     \n Error code: 3001 - registration Failed after 3 attempts
+     
+     Anonymous Registaions are not yet supported.
+     */
     public func register(recipientId: String,
-                  pushNotificationToken: String?,
+                  pushNotificationToken: String? = nil,
                   completionHandler: ((String? , Error?) -> Void)?)
     {
         self.recipientId = recipientId
         self.pushNotificationToken = pushNotificationToken
     
         guard let solutionId = self.solutionId else {
-            completionHandler!(nil, NSError(domain: "configuration error", code: -1, userInfo: ["message" : "configuration not set"]))
+            completionHandler!(nil, NSError(domain: "configuration error", code: 1001, userInfo: ["message" : "configuration not set"]))
             return
         }
 
@@ -151,7 +170,7 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
         createMobileRegistration(completionHandler)
     }
     
-    func createMobileRegistration(_ completion: ((String?, Error?) -> Void)?) {
+    private func createMobileRegistration(_ completion: ((String?, Error?) -> Void)?) {
         let fullRegistrationUrl = String(format: "%@/register/%@", self.registrationEndpoint!, self.recipientId!)
         guard let endpointUrl = URL(string: fullRegistrationUrl) else {
             NSLog("Failed to create registration URL %@", fullRegistrationUrl);
@@ -162,14 +181,18 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
             return
         }
         
+        guard let clientAppId = self.clientAppId, let clientAppVersion = self.clientAppVersion else {
+            completion!(nil, NSError(domain: "configuration error", code: -1, userInfo: ["message" : "configuration not set"]))
+            return
+        }
+
         // Make JSON to send to send to server
         let json : [String:String] = ["appInstallationId": tracker.getSPTracker().getSessionUserId(),
-                                      "clientAppId": self.clientAppId,
-                                      "clientAppVersion": self.clientAppVersion,
+                                      "clientAppId": clientAppId,
+                                      "clientAppVersion": clientAppVersion,
                                       "osName" : SPUtilities.getOSType(),
                                       "osVersion" : SPUtilities.getOSVersion(),
-                                      "pushNotificationToken" :
-                                        self.pushNotificationToken != nil ? self.pushNotificationToken! : "",
+                                      "pushNotificationToken" : self.pushNotificationToken ?? "",
                                       "deviceModel": SPUtilities.getDeviceModel(),
                                       "modelDimX" :  getXDimension(SPUtilities.getResolution()),
                                       "modelDimY" :  getYDimension(SPUtilities.getResolution())]
@@ -198,7 +221,7 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
                     } else {
                         // Failed after three attempts
                         if let completionHandler = completion {
-                            completionHandler(nil, NSError(domain: "registration", code: -1, userInfo: ["message" : "Failed after 3 attempt: " + error.localizedDescription ]));
+                            completionHandler(nil, NSError(domain: "registration", code: 3001, userInfo: ["message" : "Failed after 3 attempt: " + error.localizedDescription ]));
                         }
                     }
                 } else {
@@ -221,12 +244,12 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
         }
     }
     
-    public func getXDimension(_ resolution: String) -> String {
+    private func getXDimension(_ resolution: String) -> String {
         let slices = resolution.split(separator:"x")
         return String(slices.first ?? "?")
     }
 
-    public func getYDimension(_ resolution: String) -> String {
+    private func getYDimension(_ resolution: String) -> String {
         let slices = resolution.split(separator:"x")
         return String(slices.last ?? "?")
     }
@@ -240,11 +263,11 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
     }
 }
 
-@objc public protocol Auth {
+@objc private protocol Auth {
     @objc func getAuthInfo() -> String
 }
 
-public class BasicAuth : NSObject, Auth {
+private class BasicAuth : NSObject, Auth {
     var authInfo: String
     @objc public init(user : String, password: String) {
         let userPw = user + ":" + password;

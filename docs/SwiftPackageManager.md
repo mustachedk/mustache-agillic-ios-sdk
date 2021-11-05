@@ -29,13 +29,13 @@ Next, set the **Dependency Rule** to be `Up to Next Major Version` and specify `
 
 Then, select **Add Package**.
 
-<img src="docs/resources/swiftpm_step2.png">
+<img src="resources/swiftpm_step2.png">
 
 ---
 
 Choose the Agillic SDK that you want installed in your app.
 
-<img src="docs/resources/swiftpm_step3.png">
+<img src="resources/swiftpm_step3.png">
 
 ---
 

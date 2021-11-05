@@ -13,8 +13,22 @@ And in our [Developer portal](https://developers.agillic.com).
 ## Installation
 
 See the subsections below for details about the different installation methods.
-1. [Swift Package Manager](docs/SwiftPackageManager.md)
+1. [Swift Package Manager](README.md#swift-package-manager)
 1. [Standard pod install](README.md#standard-pod-install)
+
+### Swift Package Manager
+
+Add a package by selecting `File` → `Add Packages…` in Xcode’s menu bar.
+
+---
+
+Search for the Agillic iOS SDK using the repo's URL:
+```console
+https://github.com/mustachedk/mustache-agillic-ios-sdk.git
+```
+
+For further documentaion on setting up Swift Package Manger see: 
+1. [Swift Package Manager](docs/SwiftPackageManager.md)
 
 ### Standard pod install
 
@@ -29,20 +43,35 @@ pod 'MustacheAgillicSDK'
 
 In order to use AgillicSDK you have to initialize and configure it first.
 
-You can configure your Agillic instance in code. Minimal configuration requires you to provide:
-``AGILLIC KEY``
-``AGILLIC SECRET``
+You can configure your Agillic instance in code:
+``AGILLIC API KEY``
+``AGILLIC API SECRET``
 ``AGILLIC SOLUTION ID``
 
-Create an instance of the Agillic SDK. No configuration except authentication is required for normal use. Authentication must be done before registration (or with registerWithAuthentication):
 
+
+Initialize and configure
 ```swift
-let agillicSDK = AgillicMobileSDK()
-agillicSDK.setAuth(BasicAuth(user: "YOUR AGILLIC KEY", password: secret))
-AgillicTracker tracker = agillicSDK.register(clientAppId: clientAppId, clientAppVersion: clientVersion, 
-                                             solutionId: solutionId, userID: recipientId , 
-                                             pushNotificationToken: token, completion: completionHandler)        
+        AgillicMobileSDK.shared().configure(apiKey: apiKey, apiSecret: apiSecret, solutionId: solutionId)
 ```
+
+AgillicMovileSDK instance is now ready for usage.
+
+
+
+        
+ 
+
+
+
+## Usage
+
+
+        // Other variable, specific for your App
+        let recipientId = "RECIPIENT EMAIL" // Has to match RECIPIENT.EMAIL in the Agillic Recipient Table
+        var pushToken = "000000-0000-0000-0000000" // Push Token of this Device
+
+
 For each unique Application view setup a constant UUID and view/screen name and use the returned AgillicTracker to send App View tracking to the Agillic Platform on this App view usage:
 
 ```
