@@ -7,7 +7,7 @@
 
 import Foundation
 
-@objc public protocol AgillicRequestCallback {
+public protocol AgillicRequestCallback {
     
     func onSuccess(withCount successCount: Int)
     func onFailure(withCount failureCount: Int, successCount: Int)

@@ -8,7 +8,7 @@
 import Foundation
 import SnowplowTracker
 
-@objcMembers private class AgillicPushNotification : AgillicEvent {
+private class AgillicPushNotification : AgillicEvent {
     var screenId: String
     var screenName: String
     var type: String?
@@ -38,7 +38,8 @@ import SnowplowTracker
     }
 
     public override func track(_ tracker: SPTracker) {
-        tracker.trackPushNotificationEvent(getSnowplowEvent())
+        tracker.track(getSnowplowEvent())
+//        tracker.trackPushNotificationEvent(getSnowplowEvent())
     }
 
 }
