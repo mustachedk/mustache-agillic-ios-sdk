@@ -12,8 +12,8 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
 
 @objcMembers public class AgillicMobileSDK : NSObject, SPRequestCallback {
     
-    private let urlFormat = "https://api%@-eu1.agillic.net";
-    private var collectorEndpoint = "snowplowtrack-eu1.agillic.net";
+    private let registrationEndpoint = "https://api%@-eu1.agillic.net";
+    private var snowplowEndpoint = "snowplowtrack-eu1.agillic.net";
     private var auth: Auth? = nil;
     private var methodType : SPRequestOptions = .post
     private var protocolType : SPProtocol = .https
@@ -22,12 +22,18 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
     private var clientAppVersion: String? = nil
     private var solutionId : String? = nil
     private var pushNotificationToken: String?
-    private var registrationEndpoint: String?
     private var recipientId: String?
     private var count = 0
     private var requestCallback : AgillicRequestCallback? = nil
+
+    /**
+    Returns a global instance of AgillicMobileSDK, it needs to be configured in other to be used.
+     */
+    static let shared = AgillicMobileSDK()
     
-    
+    private override init() {
+
+    }
     /**
      Configure the AgillicMobileSDK Instance with values from your Agillic solutions.
 
@@ -44,40 +50,9 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
         self.solutionId = solutionId
     }
     
-    static let shared = AgillicMobileSDK()
+    
 
-    
-//    private static var sharedAgillicMobileSDK: AgillicMobileSDK = {
-//        let sharedInstance = AgillicMobileSDK()
-//
-//        return sharedInstance
-//    }()
 
-    /**
-    Returns a global instance of AgillicMobileSDK, it needs to be configured in other to be used.
-     */
-//    class func shared() -> AgillicMobileSDK {
-//        return sharedAgillicMobileSDK
-//    }
-    
-    private override init() {
-        super.init()
-        setAPI("");
-    }
-    
-    private func setAPI(_ api: String) {
-        registrationEndpoint = String(format: urlFormat, api);
-    }
-    
-        
-    private func setDevAPI() {
-        setAPI("dev");
-    }
-
-    private func setTestAPI() {
-        setAPI("test");
-    }
-    
     private func setCollectorEndpoint(_ urlString: String) -> Bool{
         guard let url = URL(string: urlString) else {
             return false;
@@ -93,7 +68,7 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
         else {
             return false;
         }
-        collectorEndpoint =
+        self.snowplowEndpoint =
             (url.host != nil ? url.host! : "") +
             (url.port != nil ? ":" + String(url.port!) : "") +
             url.path;
@@ -166,13 +141,13 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
             return
         }
 
-        let spTracker = getTracker(collectorEndpoint, method: methodType, recipientId: recipientId, solutionId: solutionId)
+        let spTracker = getTracker(snowplowEndpoint, method: methodType, recipientId: recipientId, solutionId: solutionId)
         self.tracker = AgillicTracker(spTracker);
         createMobileRegistration(completionHandler)
     }
     
     private func createMobileRegistration(_ completion: ((String?, Error?) -> Void)?) {
-        let fullRegistrationUrl = String(format: "%@/register/%@", self.registrationEndpoint!, self.recipientId!)
+        let fullRegistrationUrl = String(format: "%@/register/%@", self.registrationEndpoint, self.recipientId!)
         guard let endpointUrl = URL(string: fullRegistrationUrl) else {
             NSLog("Failed to create registration URL %@", fullRegistrationUrl);
             guard completion != nil else {
