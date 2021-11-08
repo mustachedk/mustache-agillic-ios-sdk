@@ -12,11 +12,9 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
 
 public class Agillic : NSObject, SPRequestCallback {
     
-    private let registrationEndpoint = "https://api%@-eu1.agillic.net";
-    private var snowplowEndpoint = "snowplowtrack-eu1.agillic.net";
+    private let registrationEndpoint = "https://api-eu1.agillic.net";
+    private var snowplowEndpoint = "https://snowplowtrack-eu1.agillic.net";
     private var auth: Auth? = nil;
-    private var methodType : SPRequestOptions = .post
-    private var protocolType : SPProtocol = .https
     private(set) public var tracker: AgillicTracker? = nil
     private var clientAppId: String? = nil
     private var clientAppVersion: String? = nil
@@ -52,8 +50,8 @@ public class Agillic : NSObject, SPRequestCallback {
      */
     public func configure(apiKey: String, apiSecret: String, solutionId: String) {
         self.auth = BasicAuth(user: apiKey, password: apiSecret);
-        self.clientAppId = Bundle.main.bundleIdentifier
-        self.clientAppVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        self.clientAppId = SPUtilities.getAppId()
+        self.clientAppVersion = SPUtilities.getAppVersion()
         self.solutionId = solutionId
     }
     
@@ -86,7 +84,7 @@ public class Agillic : NSObject, SPRequestCallback {
             return
         }
 
-        let spTracker = getTracker(snowplowEndpoint, method: methodType, recipientId: recipientId, solutionId: solutionId)
+        let spTracker = getTracker(recipientId: recipientId, solutionId: solutionId)
         self.tracker = AgillicTracker(spTracker);
         createMobileRegistration(completionHandler)
     }
@@ -94,43 +92,12 @@ public class Agillic : NSObject, SPRequestCallback {
 
     // MARK: - Internal functionality
 
-    private func setCollectorEndpoint(_ urlString: String) -> Bool{
-        guard let url = URL(string: urlString) else {
-            return false;
-        }
-        if (url.host == nil) {
-            return false;
-        }
-        if (url.scheme == "https") {
-            protocolType = .https
-        } else if (url.scheme == "http") {
-            protocolType = .http
-        }
-        else {
-            return false;
-        }
-        self.snowplowEndpoint =
-            (url.host != nil ? url.host! : "") +
-            (url.port != nil ? ":" + String(url.port!) : "") +
-            url.path;
-        return true;
-    }
-
-    /* Default is POST but can be overrided to GET */
-    private func usePostProtocol(_ usePost: Bool) {
-        methodType = usePost == true ? .post : .get
-    }
-
-    private func setRequestCallback(_ callback: AgillicRequestCallback) {
-        requestCallback = callback;
-    }
-
-    private func getTracker(_ url: String, method: SPRequestOptions, recipientId: String, solutionId: String) -> SPTracker {
+    private func getTracker(recipientId: String, solutionId: String) -> SPTracker {
         let emitter = SPEmitter.build({ (builder : SPEmitterBuilder?) -> Void in
-            builder!.setUrlEndpoint(url)
-            builder!.setHttpMethod(method)
+            builder!.setUrlEndpoint(self.snowplowEndpoint)
+            builder!.setHttpMethod(SPRequestOptions.post)
             builder!.setCallback(self)
-            builder!.setProtocol(self.protocolType)
+            builder!.setProtocol(SPProtocol.https)
             builder!.setEmitRange(500)
             builder!.setEmitThreadPoolSize(20)
             builder!.setByteLimitPost(52000)
