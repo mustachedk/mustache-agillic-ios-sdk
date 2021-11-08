@@ -81,7 +81,10 @@ public class Agillic : NSObject, SPRequestCallback {
         self.pushNotificationToken = pushNotificationToken
     
         guard let solutionId = self.solutionId else {
-            completionHandler!(nil, NSError(domain: "configuration error", code: 1001, userInfo: ["message" : "configuration not set"]))
+            let errorMsg = "configuration not set"
+            let error = NSError(domain: "configuration error", code: 1001, userInfo: ["message" : errorMsg])
+            self.logger.log(errorMsg, level: .error)
+            completionHandler?(nil, error)
             return
         }
 
@@ -124,11 +127,10 @@ public class Agillic : NSObject, SPRequestCallback {
     private func createMobileRegistration(_ completion: ((String?, Error?) -> Void)?) {
         let fullRegistrationUrl = String(format: "%@/register/%@", self.registrationEndpoint, self.recipientId!)
         guard let endpointUrl = URL(string: fullRegistrationUrl) else {
-            NSLog("Failed to create registration URL %@", fullRegistrationUrl);
-            guard completion != nil else {
-                return
-            }
-            completion!(nil, NSError(domain: "registration", code: -1, userInfo: ["message" : "Bad URL"]))
+            let errorMsg = "Failed to create registration \(fullRegistrationUrl)"
+            let error = NSError(domain: "registration", code: -1, userInfo: ["message" : errorMsg])
+            self.logger.log(errorMsg, level: .error)
+            completion?(nil, error)
             return
         }
         
@@ -144,7 +146,7 @@ public class Agillic : NSObject, SPRequestCallback {
             let errorMsg = "tracker not configrued"
             let error = NSError(domain: "tracker", code: -1, userInfo: ["message" : errorMsg])
             self.logger.log(errorMsg, level: .error)
-            completion!(nil, error)
+            completion?(nil, error)
             return
         }
 
@@ -175,34 +177,39 @@ public class Agillic : NSObject, SPRequestCallback {
 
             let task = URLSession.shared.dataTask(with: request, completionHandler: { [weak self] data, response, error in
                 if let error = error {
-                    NSLog("Failed to register: %@", error.localizedDescription)
-                    self!.count += 1;
+                    self?.logger.log("Failed to register: \(error.localizedDescription)", level: .error)
+                    self?.count += 1;
                     if self!.count < 3 {
+                        // Make 3 attempts
                         sleep(5000)
-                        self!.createMobileRegistration(completion)
+                        self?.createMobileRegistration(completion)
                     } else {
                         // Failed after three attempts
-                        if let completionHandler = completion {
-                            completionHandler(nil, NSError(domain: "registration", code: 3001, userInfo: ["message" : "Failed after 3 attempt: " + error.localizedDescription ]));
-                        }
+                        let errorMsg =  "Failed after 3 attempt: " + error.localizedDescription
+                        let error = NSError(domain: "registration", code: 3001, userInfo: ["message" : errorMsg])
+                        self?.logger.log(errorMsg, level: .error)
+                        self?.count = 0
+                        completion?(nil, error)
                     }
                 } else {
                     let response = response as? HTTPURLResponse
-                    NSLog("Register: %d", response!.statusCode)
-                    if let completionHandler = completion {
-                        if response!.statusCode < 400 {
-                            completionHandler("\(response!.statusCode)", nil);
-                        }
-                        else {
-                            completionHandler(nil, NSError(domain: "registration", code: response!.statusCode, userInfo: ["message" : "Failed with error code" ]));
-                        }
+                    if response!.statusCode < 400 {
+                        let message = "Register success response code: \(response!.statusCode)"
+                        self?.logger.log(message, level: .debug)
+                        completion?(message, nil)
+                    }
+                    else {
+                        let errorMsg = "Register failed with error code: \(response!.statusCode)"
+                        let error = NSError(domain: "registration", code: -1, userInfo: ["message" : errorMsg])
+                        self?.logger.log(errorMsg, level: .error)
+                        completion?(nil, error)
                     }
                 }
             })
             task.resume()
-            self.logger.log("Registration successfully sent", level: .debug)
+            self.logger.log("Registration sent", level: .debug)
         } catch{
-            self.logger.log("Registration Exception", level: .debug)
+            self.logger.log("Registration exception", level: .debug)
         }
     }
     
@@ -255,6 +262,7 @@ public class AgillicLogger {
         case debug
         case warning
         case error
+        case off
 
         // Implement Comparable
         public static func < (a: AgillicLogLevel, b: AgillicLogLevel) -> Bool {
