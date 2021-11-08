@@ -10,7 +10,7 @@ import SnowplowTracker
 
 typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
 
-public class AgillicMobileSDK : NSObject, SPRequestCallback {
+public class Agillic : NSObject, SPRequestCallback {
     
     private let registrationEndpoint = "https://api%@-eu1.agillic.net";
     private var snowplowEndpoint = "snowplowtrack-eu1.agillic.net";
@@ -26,18 +26,20 @@ public class AgillicMobileSDK : NSObject, SPRequestCallback {
     private var count = 0
     private var requestCallback : AgillicRequestCallback? = nil
 
+    // MARK: - Initializer & Usage methods
+    
     /**
     Returns a global instance of AgillicMobileSDK, it needs to be configured in other to be used.
      */
-    static let instance = AgillicMobileSDK()
+    public static var shared: Agillic = Agillic()
     
     private override init() {
         super.init()
     }
     
-    class func shared() -> AgillicMobileSDK {
-        return AgillicMobileSDK.instance
-    }
+//    class func shared() -> AgillicMobileSDK {
+//        return AgillicMobileSDK.instance
+//    }
     
     /**
      Configure the AgillicMobileSDK Instance with values from your Agillic solutions.
@@ -55,8 +57,42 @@ public class AgillicMobileSDK : NSObject, SPRequestCallback {
         self.solutionId = solutionId
     }
     
+    /**
+     Register this app installation into the Agillic solutiion.
+     Crate a new entry in the AGILLIC_REGISTRAION OTM Table in Recipient doesn't already have a Regration.
+     
+     - precondition: AgillicMobileSDK.shared().configure(:) must be called prior to this.
+     - precondition: Recipient needs to exist in the Agillic Solution to in order successfully register installation
+
+     - Parameter recipientId: This is mapped to the Recipient.Email in the Agillic Solution.
+     - Parameter pushNotificationToken: No description
+     - Parameter completionHandler: success/failure callback
+    
+     - Throws: Error code: 1001 - solutionID missing
+    Error code: 1002 - recipientId missing
+     \n Error code: 3001 - registration Failed after 3 attempts
+     
+     Anonymous Registaions are not yet supported.
+     */
+    public func register(recipientId: String,
+                  pushNotificationToken: String? = nil,
+                  completionHandler: ((String? , Error?) -> Void)? = nil)
+    {
+        self.recipientId = recipientId
+        self.pushNotificationToken = pushNotificationToken
+    
+        guard let solutionId = self.solutionId else {
+            completionHandler!(nil, NSError(domain: "configuration error", code: 1001, userInfo: ["message" : "configuration not set"]))
+            return
+        }
+
+        let spTracker = getTracker(snowplowEndpoint, method: methodType, recipientId: recipientId, solutionId: solutionId)
+        self.tracker = AgillicTracker(spTracker);
+        createMobileRegistration(completionHandler)
+    }
     
 
+    // MARK: - Internal functionality
 
     private func setCollectorEndpoint(_ urlString: String) -> Bool{
         guard let url = URL(string: urlString) else {
@@ -115,40 +151,6 @@ public class AgillicMobileSDK : NSObject, SPRequestCallback {
             builder!.setInstallEvent(true)
         })
         return newTracker!
-    }
-
-    /**
-     Register this app installation into the Agillic solutiion.
-     Crate a new entry in the AGILLIC_REGISTRAION OTM Table in Recipient doesn't already have a Regration.
-     
-     - precondition: AgillicMobileSDK.shared().configure(:) must be called prior to this.
-     - precondition: Recipient needs to exist in the Agillic Solution to in order successfully register installation
-
-     - Parameter recipientId: This is mapped to the Recipient.Email in the Agillic Solution.
-     - Parameter pushNotificationToken: No description
-     - Parameter completionHandler: success/failure callback
-    
-     - Throws: Error code: 1001 - solutionID missing
-    Error code: 1002 - recipientId missing
-     \n Error code: 3001 - registration Failed after 3 attempts
-     
-     Anonymous Registaions are not yet supported.
-     */
-    public func register(recipientId: String,
-                  pushNotificationToken: String? = nil,
-                  completionHandler: ((String? , Error?) -> Void)? = nil)
-    {
-        self.recipientId = recipientId
-        self.pushNotificationToken = pushNotificationToken
-    
-        guard let solutionId = self.solutionId else {
-            completionHandler!(nil, NSError(domain: "configuration error", code: 1001, userInfo: ["message" : "configuration not set"]))
-            return
-        }
-
-        let spTracker = getTracker(snowplowEndpoint, method: methodType, recipientId: recipientId, solutionId: solutionId)
-        self.tracker = AgillicTracker(spTracker);
-        createMobileRegistration(completionHandler)
     }
     
     private func createMobileRegistration(_ completion: ((String?, Error?) -> Void)?) {
@@ -230,6 +232,8 @@ public class AgillicMobileSDK : NSObject, SPRequestCallback {
         }
     }
     
+    // MARK: - Util
+    
     private func getXDimension(_ resolution: String) -> String {
         let slices = resolution.split(separator:"x")
         return String(slices.first ?? "?")
@@ -240,6 +244,8 @@ public class AgillicMobileSDK : NSObject, SPRequestCallback {
         return String(slices.last ?? "?")
     }
 
+    // MARK: - SPRequestCallback
+    
     public func onSuccess(withCount successCount: Int) {
         requestCallback?.onSuccess(withCount: successCount)
     }
@@ -249,6 +255,7 @@ public class AgillicMobileSDK : NSObject, SPRequestCallback {
     }
 }
 
+// MARK: - Auth
 @objc private protocol Auth {
     @objc func getAuthInfo() -> String
 }

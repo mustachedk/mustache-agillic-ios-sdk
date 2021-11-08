@@ -19,17 +19,17 @@ class MyClass {
         var pushToken = "000000-0000-0000-0000000" // Push Token of this Device
 
         // Initialize and configuration
-        AgillicMobileSDK.shared().configure(apiKey: apiKey, apiSecret: apiSecret, solutionId: solutionId)
+        Agillic.shared.configure(apiKey: apiKey, apiSecret: apiSecret, solutionId: solutionId)
         
         // Register without PushToken
-        AgillicMobileSDK.shared().register(recipientId: recipientId)
+        Agillic.shared.register(recipientId: recipientId)
         
         // Register with PushToken
-        AgillicMobileSDK.shared().register(recipientId: recipientId, pushNotificationToken: pushToken)
+        Agillic.shared.register(recipientId: recipientId, pushNotificationToken: pushToken)
 
         // Example of AppView tracking
         let appView = AgillicAppViewEvent(screenName: "app/landingpage")
-        AgillicMobileSDK.shared.tracker.track(appView)
+        Agillic.shared.tracker.track(appView)
         
     }
     
