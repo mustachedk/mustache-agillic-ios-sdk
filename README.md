@@ -26,7 +26,7 @@ Add a package by selecting `File` → `Add Packages…` in Xcode’s menu bar.
 
 Search for the Agillic iOS SDK using the repo's URL:
 ```console
-https://github.com/mustachedk/mustache-agillic-ios-sdk.git
+https://github.com/agillic/agillic-ios-sdk.git
 ```
 
 For further documentaion on setting up Swift Package Manger see: 
@@ -38,7 +38,7 @@ The Agillic SDK is available through [CocoaPods](https://cocoapods.org).
 To install it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'MustacheAgillicSDK'
+pod 'AgillicSDK'
 ```
 
 ## Initializing the Agillic SDK
@@ -55,7 +55,7 @@ in the [Agillic Solution Setup Guide](docs/AgillicSolutionSetup.md)
 
 Initialize and configure
 ```swift
-AgillicMobileSDK.shared().configure(apiKey: apiKey, apiSecret: apiSecret, solutionId: solutionId)
+Agillic.shared.configure(apiKey: "AGILLIC API KEY", apiSecret: "AGILLIC API SECRET", solutionId: "AGILLIC SOLUTION ID")
 ```
 
 AgillicMobileSDK instance is now ready for usage.
@@ -67,14 +67,14 @@ AgillicMobileSDK instance is now ready for usage.
 * ``RECIPIENT ID`` - Has to match RECIPIENT.EMAIL in the Agillic Recipient Table
 
 ```swift
-AgillicMobileSDK.shared().register(recipientId: "RECIPIENT ID")
+Agillic.shared.register(recipientId: "RECIPIENT ID")
 ```
 
 ### Register Push Token
 
 ```swift
 var pushToken = "000000-0000-0000-0000000" // Push Token of this Device
-AgillicMobileSDK.shared().register(recipientId: "RECIPIENT ID", pushNotificationToken: "PUSH TOKEN")
+Agillic.shared.register(recipientId: "RECIPIENT ID", pushNotificationToken: "PUSH TOKEN")
 ```
 
 ### App View tracking
@@ -83,7 +83,7 @@ Track recipient behavior with App View Tracking
 
 ```swift
 let appViewEvent = AgillicAppViewEvent(screenName: "app/landingpage")
-AgillicMobileSDK.shared().tracker.track(appViewEvent)
+Agillic.shared.tracker.track(appViewEvent)
 ```
 
 The ``screenName`` is the value that can be matched in the Condition Editor.
@@ -93,5 +93,5 @@ The suggested name convention to use some hierarchical ``app/sublevel-1/sublevel
 ## Questions and Issues
 
 Please provide any feedback via a [GitHub
-Issue](https://github.com/mustachedk/mustache-agillic-ios-sdk/issues/new).
+Issue](https://github.com/agillic/agillic-ios-sdk/issues/new).
 

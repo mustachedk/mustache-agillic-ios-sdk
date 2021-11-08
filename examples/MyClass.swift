@@ -16,12 +16,12 @@ class MyClass {
         
         // Other variable, specific for your App
         let recipientId = "RECIPIENT EMAIL" // Has to match RECIPIENT.EMAIL in the Agillic Recipient Table
-        var pushToken = "000000-0000-0000-0000000" // Push Token of this Device
+        var pushToken = "PUSH TOKEN" // Push Token of this Device
 
         // Initialize and configuration
         Agillic.shared.configure(apiKey: apiKey, apiSecret: apiSecret, solutionId: solutionId)
         
-        // TODO: Configure Log Level 
+        // Configure Log Level
         Agillic.shared.logger.logLevel = .verbose
         
         // Register without PushToken

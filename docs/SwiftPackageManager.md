@@ -22,7 +22,7 @@ Add a package by selecting `File` → `Add Packages…` in Xcode’s menu bar.
 
 Search for the Agillic iOS SDK using the repo's URL:
 ```console
-https://github.com/mustachedk/mustache-agillic-ios-sdk.git
+https://github.com/agillic/agillic-ios-sdk.git
 ```
 
 Next, set the **Dependency Rule** to be `Up to Next Major Version` and specify `1.0.0` as the lower bound.
@@ -48,8 +48,8 @@ Firebase to the dependencies array of your package:
 dependencies: [
   .package(
     name: "AgillicSDK",
-    url: "https://github.com/mustachedk/mustache-agillic-ios-sdk.git",
-    .upToNextMajor(from: "1.0.0")
+    url: "https://github.com/agillic/agillic-ios-sdk.git",
+    .upToNextMajor(from: "0.0.0")
   ),
 
   // Any other dependencies you have...
@@ -63,7 +63,7 @@ array of that target:
 .target(
   name: "MyTargetName",
   dependencies: [
-    .product(name: "MustacheAgillicSDK", package: "MustacheAgillicSDK"),
+    .product(name: "AgillicSDK", package: "AgillicSDK"),
   ]
 ),
 ```

@@ -2,18 +2,18 @@
 import PackageDescription
 
 let package = Package(
-  name: "MustacheAgillicSDK",
+  name: "AgillicSDK",
   platforms: [.iOS(.v11)],
   products: [
-    .library(name: "MustacheAgillicSDK", targets: ["MustacheAgillicSDK"]),
+    .library(name: "AgillicSDK", targets: ["AgillicSDK"]),
   ],
   dependencies: [
    .package(url: "https://github.com/snowplow/snowplow-objc-tracker", .upToNextMajor(from: "1.3.0"))
  ],
   targets: [
     .target(
-        name: "MustacheAgillicSDK",
+        name: "AgillicSDK",
         dependencies: ["SnowplowTracker"],
-        path: "src/MustacheAgillicSDK")
+        path: "src/AgillicSDK")
   ]
 )
