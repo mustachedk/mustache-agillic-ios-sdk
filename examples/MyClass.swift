@@ -21,6 +21,9 @@ class MyClass {
         // Initialize and configuration
         Agillic.shared.configure(apiKey: apiKey, apiSecret: apiSecret, solutionId: solutionId)
         
+        // TODO: Configure Log Level 
+        Agillic.shared.logger.logLevel = .verbose
+        
         // Register without PushToken
         Agillic.shared.register(recipientId: recipientId)
         

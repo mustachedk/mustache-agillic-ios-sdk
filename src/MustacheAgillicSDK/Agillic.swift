@@ -13,7 +13,7 @@ typealias AgillicSDKResponse = (Result<String, NSError>) -> Void
 public class Agillic : NSObject, SPRequestCallback {
     
     private let registrationEndpoint = "https://api-eu1.agillic.net";
-    private var snowplowEndpoint = "https://snowplowtrack-eu1.agillic.net";
+    private var snowplowEndpoint = "snowplowtrack-eu1.agillic.net";
     private var auth: Auth? = nil;
     private(set) public var tracker: AgillicTracker? = nil
     private var clientAppId: String? = nil
@@ -23,7 +23,8 @@ public class Agillic : NSObject, SPRequestCallback {
     private var recipientId: String?
     private var count = 0
     private var requestCallback : AgillicRequestCallback? = nil
-
+    private var logger = AgillicLogger()
+    
     // MARK: - Initializer & Usage methods
     
     /**
@@ -132,12 +133,18 @@ public class Agillic : NSObject, SPRequestCallback {
         }
         
         guard let clientAppId = self.clientAppId, let clientAppVersion = self.clientAppVersion else {
-            completion!(nil, NSError(domain: "configuration error", code: -1, userInfo: ["message" : "configuration not set"]))
+            let errorMsg = "configuration not set"
+            let error = NSError(domain: "configuration error", code: -1, userInfo: ["message" : errorMsg])
+            self.logger.log(errorMsg, level: .error)
+            completion!(nil, error)
             return
         }
         
         guard let tracker = self.tracker else {
-            completion!(nil, NSError(domain: "tracker", code: -1, userInfo: ["message" : "tracker not configrued"]))
+            let errorMsg = "tracker not configrued"
+            let error = NSError(domain: "tracker", code: -1, userInfo: ["message" : errorMsg])
+            self.logger.log(errorMsg, level: .error)
+            completion!(nil, error)
             return
         }
 
@@ -155,7 +162,7 @@ public class Agillic : NSObject, SPRequestCallback {
             let data = try JSONSerialization.data(withJSONObject: json, options: [])
             // Convert to a string and print
             if let JSONString = String(data: data, encoding: String.Encoding.utf8) {
-               NSLog("Registration JSON: %@", JSONString)
+                self.logger.log("Registration JSON: \(JSONString)", level: .debug)
             }
     
             var request = URLRequest(url: endpointUrl)
@@ -193,9 +200,9 @@ public class Agillic : NSObject, SPRequestCallback {
                 }
             })
             task.resume()
-            NSLog("Registration sendt")
+            self.logger.log("Registration successfully sent", level: .debug)
         } catch{
-            NSLog("Registration Exception")
+            self.logger.log("Registration Exception", level: .debug)
         }
     }
     
@@ -237,4 +244,31 @@ private class BasicAuth : NSObject, Auth {
     public func getAuthInfo() -> String {
         return authInfo;
     }
+}
+
+// MARK: - Logger
+    
+private class AgillicLogger {
+    
+    public enum AgillicLogLevel: Int, Comparable {
+        case verbose
+        case debug
+        case warning
+        case error
+
+        // Implement Comparable
+        public static func < (a: AgillicLogLevel, b: AgillicLogLevel) -> Bool {
+            return a.rawValue < b.rawValue
+        }
+    }
+ 
+    public var logLevel: AgillicLogLevel = .verbose
+
+    public func log(_ msg: String, level: AgillicLogLevel) {
+        
+        if self.logLevel <= level {
+            NSLog(msg)
+        }
+    }
+    
 }
