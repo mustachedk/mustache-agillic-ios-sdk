@@ -23,7 +23,7 @@ public class Agillic : NSObject, SPRequestCallback {
     private var recipientId: String?
     private var count = 0
     private var requestCallback : AgillicRequestCallback? = nil
-    private var logger = AgillicLogger()
+    public let logger = AgillicLogger()
     
     // MARK: - Initializer & Usage methods
     
@@ -248,7 +248,7 @@ private class BasicAuth : NSObject, Auth {
 
 // MARK: - Logger
     
-private class AgillicLogger {
+public class AgillicLogger {
     
     public enum AgillicLogLevel: Int, Comparable {
         case verbose
