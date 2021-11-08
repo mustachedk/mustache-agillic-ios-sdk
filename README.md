@@ -12,7 +12,7 @@ And in our [Developer portal](https://developers.agillic.com).
 
 ## Requirements
 
-- Requires iOS 11
+- Requires your iOS Application to run iOS 11 or greater
 
 ## Installation
 
@@ -29,7 +29,7 @@ Search for the Agillic iOS SDK using the repo's URL:
 https://github.com/agillic/agillic-ios-sdk.git
 ```
 
-For further documentaion on setting up Swift Package Manger see: 
+For further documentaion on setting up the AgillicSDK with Swift Package Manger see: 
 [Swift Package Manager](docs/SwiftPackageManager.md)
 
 ### Standard pod install
@@ -53,9 +53,21 @@ You can configure your Agillic instance in code:
 See how to setup your Agillic Solution and obtain these values 
 in the [Agillic Solution Setup Guide](docs/AgillicSolutionSetup.md)
 
-Initialize and configure
+### Initialize in app
+
+Start by importing the AgillicSDK Module into your AppDelegate Swift file
 ```swift
-Agillic.shared.configure(apiKey: "AGILLIC API KEY", apiSecret: "AGILLIC API SECRET", solutionId: "AGILLIC SOLUTION ID")
+import AgillicSDK
+```
+
+Initialize and configure the Agillic SDK upon launch
+```swift
+func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+
+    Agillic.shared.configure(apiKey: "AGILLIC API KEY", apiSecret: "AGILLIC API SECRET", solutionId: "AGILLIC SOLUTION ID")
+    return true
+}
+    
 ```
 
 AgillicMobileSDK instance is now ready for usage.
@@ -72,9 +84,17 @@ Agillic.shared.register(recipientId: "RECIPIENT ID")
 
 ### Register Push Token
 
+Register for Remote Push Notifications in your App, like you used to and implement this in your AppDelegate.
+_NOTE: This requires you to have already obtained the Recipient ID and stored across app sessoins - this is currently only supported for known recipients._
+
 ```swift
-var pushToken = "000000-0000-0000-0000000" // Push Token of this Device
-Agillic.shared.register(recipientId: "RECIPIENT ID", pushNotificationToken: "PUSH TOKEN")
+func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+    
+    let pushToken = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
+    
+    // Register with PushToken
+    Agillic.shared.register(recipientId: "RECIPIENT ID", pushNotificationToken: pushToken)
+}
 ```
 
 ### App View tracking

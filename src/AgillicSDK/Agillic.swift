@@ -270,7 +270,7 @@ public class AgillicLogger {
         }
     }
  
-    public var logLevel: AgillicLogLevel = .verbose
+    public var logLevel: AgillicLogLevel = .off
 
     public func log(_ msg: String, level: AgillicLogLevel) {
         
