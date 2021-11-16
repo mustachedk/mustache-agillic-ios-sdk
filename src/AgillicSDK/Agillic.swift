@@ -28,7 +28,7 @@ public class Agillic : NSObject, SPRequestCallback {
     // MARK: - Initializer & Usage methods
     
     /**
-    Returns a global instance of AgillicMobileSDK, it needs to be configured in other to be used.
+    Returns a global instance of AgillicSDK, it needs to be configured in other to be used.
      */
     public static var shared: Agillic = Agillic()
     
@@ -36,12 +36,8 @@ public class Agillic : NSObject, SPRequestCallback {
         super.init()
     }
     
-//    class func shared() -> AgillicMobileSDK {
-//        return AgillicMobileSDK.instance
-//    }
-    
     /**
-     Configure the AgillicMobileSDK Instance with values from your Agillic solutions.
+     Configure the AgillicSDK Instance with values from your Agillic solutions.
 
      - Parameter apiKey: Your personal Agillic API Key
      - Parameter apiSecret: Your personal Agillic API Key
@@ -81,7 +77,7 @@ public class Agillic : NSObject, SPRequestCallback {
         self.pushNotificationToken = pushNotificationToken
     
         guard let solutionId = self.solutionId else {
-            let errorMsg = "configuration not set"
+            let errorMsg = "Configuration not set"
             let error = NSError(domain: "configuration error", code: 1001, userInfo: ["message" : errorMsg])
             self.logger.log(errorMsg, level: .error)
             completionHandler?(nil, error)
@@ -93,6 +89,24 @@ public class Agillic : NSObject, SPRequestCallback {
         createMobileRegistration(completionHandler)
     }
     
+    
+    // MARK: - Tracking
+    
+    public func track(_ event : AgillicEvent) {
+        guard let tracker = self.tracker else {
+            let errorMsg = "Configuration not set"
+            self.logger.log(errorMsg, level: .error)
+            return
+        }
+        tracker.track(event)
+    }
+    
+    public func handlePushNotificationOpened() {
+        // create event with
+        let pushEvent = AgillicAppViewEvent(screenName: "push/open/xxxx")
+        self.track(pushEvent)
+
+    }
 
     // MARK: - Internal functionality
 

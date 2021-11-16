@@ -21,6 +21,19 @@ public class AgillicAppViewEvent : AgillicEvent {
         self.previousScreenId = previousScreenId
     }
     
+    func buildSnowplowPVEvent() -> SPPageView? {
+        let event = SPPageView.build({ (builder : SPPageViewBuilder?) -> Void in
+            
+//            builder!.setName(self.screenName)
+//            builder!.setScreenId(self.screenId)
+//            builder!.setType(self.type)
+//            builder!.setPreviousScreenId(self.previousScreenId)
+            
+        })
+        
+        return event;
+    }
+    
     func buildSnowplowEvent() -> SPScreenView? {
         let event = SPScreenView.build({ (builder : SPScreenViewBuilder?) -> Void in
             builder!.setName(self.screenName)
@@ -29,6 +42,7 @@ public class AgillicAppViewEvent : AgillicEvent {
             builder!.setPreviousScreenId(self.previousScreenId)
             
         })
+        
         return event;
     }
 

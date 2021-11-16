@@ -1,24 +1,28 @@
 # Agillic SDK for iOS
 
-The Agillic SDK enables you to utilize the Agillic platform from within your iOS App. 
+The Agillic SDK enables you to utilize the Agillic platform from within your iOS App.
 The SDK currently includes the following functionality:
 
- * Device registation by known recipients
- * Register Push Notification Tokens to a known recipient
- * Track recipient behavior, which can be used in [Target Groups](https://support.agillic.com/hc/en-gb/articles/360007001991-All-You-Need-to-Know-About-Target-Groups)
- 
+ * Register devices used by a recipient in your mobile application.
+ * Register a recipient token required to send a Push Notification to a device using Apple PN on iOS or Firebase Cloud Messaging for Android. When registered, this token will allow sending push notifications to recipients via the Agillic Dashboard.
+ * Track recipient events. Tracking can be paused and resumed when requested by the user. Tracked events can be used to define [Target Groups](https://support.agillic.com/hc/en-gb/articles/360007001991-All-You-Need-to-Know-About-Target-Groups) in the Agillic Dashboard which can be used to direct targeted marketing and other communication.
+
 Read more about the Agillic Platform on the [official Agillic website](https://agillic.com).
 And in our [Developer portal](https://developers.agillic.com).
 
+
+Agillic SDK for Android can be found here: 
+
+
 ## Requirements
 
-- Requires your iOS Application to run iOS 11 or greater
+- Requires minimum iOS 11+
 
 ## Installation
 
 See the subsections below for details about the different installation methods.
 * [Swift Package Manager](README.md#swift-package-manager)
-* [Standard pod install](README.md#standard-pod-install)
+* [Import Manually](README.md#import-manually)
 
 ### Swift Package Manager
 
@@ -29,17 +33,16 @@ Search for the Agillic iOS SDK using the repo's URL:
 https://github.com/agillic/agillic-ios-sdk.git
 ```
 
-For further documentaion on setting up the AgillicSDK with Swift Package Manger see: 
+For detailed documentaion on setting up the Agillic SDK with Swift Package Manger see: 
 [Swift Package Manager](docs/SwiftPackageManager.md)
 
-### Standard pod install
+### Import Manually
 
-The Agillic SDK is available through [CocoaPods](https://cocoapods.org). 
-To install it, simply add the following line to your Podfile:
-
-```ruby
-pod 'AgillicSDK'
-```
+* Download this repository by selecting `Code` → `Download ZIP`.
+* Open Downloads and locate ./src/AgillicSDK folder
+* Drag and drop the AgillicSDK to your project
+* Make sure to check `Copy items if needed` and Add to your App Target.
+* The Agillic SDK are dependant on the Snowplow iOS Tracker SDK version 1.7.1 and FMDB (OUT OF SCOPE)
 
 ## Initializing the Agillic SDK
 
@@ -70,7 +73,7 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
     
 ```
 
-AgillicMobileSDK instance is now ready for usage.
+Your Agillic SDK instance is now ready for usage.
 
 ## Usage
 
@@ -109,9 +112,10 @@ Agillic.shared.tracker.track(appViewEvent)
 The ``screenName`` is the value that can be matched in the Condition Editor.
 The suggested name convention to use some hierarchical ``app/sublevel-1/sublevel-2/...``
 
-
 ## Questions and Issues
 
-Please provide any feedback via a [GitHub
-Issue](https://github.com/agillic/agillic-ios-sdk/issues/new).
+Please provide any feedback via a [GitHub Issue](https://github.com/agillic/agillic-ios-sdk/issues/new).
 
+## Copyright and license
+
+``INSERT LICENSE SHORT VERSION``

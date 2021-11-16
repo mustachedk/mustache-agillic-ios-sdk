@@ -33,6 +33,10 @@ class MyClass {
         // Example of AppView tracking
         let appView = AgillicAppViewEvent(screenName: "app/landingpage")
         Agillic.shared.tracker.track(appView)
+        Agillic.shared.track(appView)
+
+        Agillic.shared.tracker?.pauseTracking()
+        Agillic.shared.tracker?.resumeTracking()
         
     }
     
