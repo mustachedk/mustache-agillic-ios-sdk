@@ -227,6 +227,24 @@ public class Agillic : NSObject, SPRequestCallback {
         }
     }
     
+    // MARK: - Logging
+    
+    public func setLogLevel(_ logLevel: AgillicLogLevel) -> Void {
+        self.logger.logLevel = logLevel
+        switch logLevel {
+        case .verbose:
+            self.tracker?.tracker.setLogLevel(.verbose)
+        case .debug:
+            self.tracker?.tracker.setLogLevel(.debug)
+        case .warning,
+            .error:
+            self.tracker?.tracker.setLogLevel(.error)
+        case .off:
+            self.tracker?.tracker.setLogLevel(.off)
+        }
+    }
+    
+    
     // MARK: - Util
     
     private func getXDimension(_ resolution: String) -> String {
@@ -270,20 +288,7 @@ private class BasicAuth : NSObject, Auth {
 // MARK: - Logger
     
 public class AgillicLogger {
-    
-    public enum AgillicLogLevel: Int, Comparable {
-        case verbose
-        case debug
-        case warning
-        case error
-        case off
-
-        // Implement Comparable
-        public static func < (a: AgillicLogLevel, b: AgillicLogLevel) -> Bool {
-            return a.rawValue < b.rawValue
-        }
-    }
- 
+     
     public var logLevel: AgillicLogLevel = .off
 
     public func log(_ msg: String, level: AgillicLogLevel) {
@@ -293,4 +298,17 @@ public class AgillicLogger {
         }
     }
     
+}
+
+public enum AgillicLogLevel: Int, Comparable {
+    case verbose
+    case debug
+    case warning
+    case error
+    case off
+
+    // Implement Comparable
+    public static func < (a: AgillicLogLevel, b: AgillicLogLevel) -> Bool {
+        return a.rawValue < b.rawValue
+    }
 }
