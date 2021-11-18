@@ -5,7 +5,7 @@ The SDK currently includes the following functionality:
 
  * Register devices used by a recipient in your mobile application.
  * Register a recipient token required to send a Push Notification to a device using Apple PN on iOS or Firebase Cloud Messaging for Android. When registered, this token will allow sending push notifications to recipients via the Agillic Dashboard.
- * Track recipient events. Tracking can be paused and resumed when requested by the user. Tracked events can be used to define [Target Groups](https://support.agillic.com/hc/en-gb/articles/360007001991-All-You-Need-to-Know-About-Target-Groups) in the Agillic Dashboard which can be used to direct targeted marketing and other communication.
+ * Track recipient App Views. Tracking can be paused and resumed when requested by the user. Tracked events can be used to define [Target Groups](https://support.agillic.com/hc/en-gb/articles/360007001991-All-You-Need-to-Know-About-Target-Groups) in the Agillic Dashboard which can be used to direct targeted marketing and other communication.
 
 Read more about the Agillic Platform on the [official Agillic website](https://agillic.com).
 And in our [Developer portal](https://developers.agillic.com).
@@ -100,9 +100,15 @@ func application(_ application: UIApplication, didRegisterForRemoteNotifications
 }
 ```
 
-### App View tracking
+### Track Push Opened 
 
-Track recipient behavior with App View Tracking 
+```swift
+    Agillic.shared.handlePushNotificationOpened(userInfo: userInfo)
+```
+
+### App View Tracking
+
+Track recipient behavior with App View Tracking
 
 ```swift
     let appView = AgillicAppView(screenName: "app://product-offers/21")
