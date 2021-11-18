@@ -119,9 +119,13 @@ The ``screenName`` is the value that can be matched in the Condition Editor.
 The suggested name convention to use some hierarchical ``app://sublevel-1/sublevel-2/...``
 
 *Examples of usage:*
+
 ``app://landingpage``
-``app://landingpage/sign-up/step-2`
+
+``app://landingpage/sign-up/step-2``
+
 ``app://dashboard/product-offers/21``
+
 ``app://menu/profile/edit``
 
 ## Questions and Issues
