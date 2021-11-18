@@ -101,12 +101,17 @@ public class Agillic : NSObject, SPRequestCallback {
         tracker.track(event)
     }
     
-    public func handlePushNotificationOpened() {
-        // create event with
-        let pushEvent = AgillicAppViewEvent(screenName: "push/open/xxxx")
+    /// Handles push notification opened - user action for alert notifications, delivery into app
+    /// This method will parse the data and track it
+    public func handlePushNotificationOpened(userInfo: [AnyHashable: Any]) {
+//        guard Agillic.isExponeaNotification(userInfo: userInfo) else {
+//            Agilic.logger.log(.verbose, message: "Skipping non-Exponea notification")
+//            return
+//        }
+        let pushEvent = AgillicAppViewEvent(screenName: "pushOpened://campaignId=\(userInfo["campaignID"] ?? "none")")
         self.track(pushEvent)
-
     }
+
 
     // MARK: - Internal functionality
 

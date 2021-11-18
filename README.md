@@ -105,8 +105,8 @@ func application(_ application: UIApplication, didRegisterForRemoteNotifications
 Track recipient behavior with App View Tracking 
 
 ```swift
-let appViewEvent = AgillicAppViewEvent(screenName: "app/landingpage")
-Agillic.shared.tracker.track(appViewEvent)
+    let appViewEvent = AgillicAppViewEvent(screenName: "app/landingpage")
+    Agillic.shared.tracker.track(appViewEvent)
 ```
 
 The ``screenName`` is the value that can be matched in the Condition Editor.
