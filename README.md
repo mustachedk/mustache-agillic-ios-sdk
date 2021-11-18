@@ -122,6 +122,7 @@ func application(_ application: UIApplication, didRegisterForRemoteNotifications
 
 ### Track Push Opened 
 
+TODO: Better documentation here.
 ```swift
     Agillic.shared.handlePushNotificationOpened(userInfo: userInfo)
 ```
