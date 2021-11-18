@@ -31,11 +31,13 @@ class MyClass {
         Agillic.shared.register(recipientId: recipientId, pushNotificationToken: pushToken)
 
         // Example of AppView tracking
-        let appView = AgillicAppViewEvent(screenName: "app/landingpage")
-        Agillic.shared.tracker.track(appView)
+        let appView = AgillicAppView(screenName: "app://product-offers/21")
         Agillic.shared.track(appView)
 
+        // Pause Tracking (usefull until ATT and other consents has been obtained)
         Agillic.shared.tracker?.pauseTracking()
+        
+        // Resume Tracking
         Agillic.shared.tracker?.resumeTracking()
         
     }

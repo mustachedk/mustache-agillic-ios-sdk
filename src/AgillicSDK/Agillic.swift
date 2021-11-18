@@ -92,7 +92,7 @@ public class Agillic : NSObject, SPRequestCallback {
     
     // MARK: - Tracking
     
-    public func track(_ event : AgillicEvent) {
+    public func track(_ event : AgillicTrackingEvent) {
         guard let tracker = self.tracker else {
             let errorMsg = "Configuration not set"
             self.logger.log(errorMsg, level: .error)
@@ -104,14 +104,29 @@ public class Agillic : NSObject, SPRequestCallback {
     /// Handles push notification opened - user action for alert notifications, delivery into app
     /// This method will parse the data and track it
     public func handlePushNotificationOpened(userInfo: [AnyHashable: Any]) {
-//        guard Agillic.isExponeaNotification(userInfo: userInfo) else {
-//            Agilic.logger.log(.verbose, message: "Skipping non-Exponea notification")
-//            return
-//        }
-        let pushEvent = AgillicAppViewEvent(screenName: "pushOpened://campaignId=\(userInfo["campaignID"] ?? "none")")
+        guard let agillicPushId = self.getAgillicPushId(userInfo: userInfo) else {
+            self.logger.log("Skipping non-Agillic notification", level: .debug)
+            return
+        }
+        let pushEvent = AgillicAppView(screenName: "pushOpened://agillic_push_id=\(agillicPushId)")
         self.track(pushEvent)
     }
 
+    /// Validates it push notification opened - is a Agillic Push Notifcation based on payload
+    private func getAgillicPushId(userInfo: [AnyHashable: Any]) -> String? {
+        guard let userInfo = userInfo as? [String: AnyObject],
+            let aps = userInfo["aps"] as? [String: AnyObject],
+            let agillic_push_id = aps["agillic_push_id"] as? String else {
+            return nil
+        }
+        return agillic_push_id
+    }
+    
+    /// Validates it push notification opened - is a Agillic Push Notifcation based on payload
+    private func isAgillicNotification(userInfo: [AnyHashable: Any]) -> Bool {
+        return self.getAgillicPushId(userInfo: userInfo) != nil
+    }
+    
 
     // MARK: - Internal functionality
 
@@ -170,15 +185,18 @@ public class Agillic : NSObject, SPRequestCallback {
         }
 
         // Make JSON to send to send to server
-        let json : [String:String] = ["appInstallationId": tracker.getSPTracker().getSessionUserId(),
-                                      "clientAppId": clientAppId,
-                                      "clientAppVersion": clientAppVersion,
-                                      "osName" : SPUtilities.getOSType(),
-                                      "osVersion" : SPUtilities.getOSVersion(),
-                                      "pushNotificationToken" : self.pushNotificationToken ?? "",
-                                      "deviceModel": SPUtilities.getDeviceModel(),
-                                      "modelDimX" :  getXDimension(SPUtilities.getResolution()),
-                                      "modelDimY" :  getYDimension(SPUtilities.getResolution())]
+        let json : [String:String] =
+        [
+            "appInstallationId": tracker.getSPTracker().getSessionUserId(),
+            "clientAppId": clientAppId,
+            "clientAppVersion": clientAppVersion,
+            "osName" : SPUtilities.getOSType(),
+            "osVersion" : SPUtilities.getOSVersion(),
+            "pushNotificationToken" : self.pushNotificationToken ?? "",
+            "deviceModel": SPUtilities.getDeviceModel(),
+            "modelDimX" :  getXDimension(SPUtilities.getResolution()),
+            "modelDimY" :  getYDimension(SPUtilities.getResolution())
+        ]
         do {
             let data = try JSONSerialization.data(withJSONObject: json, options: [])
             // Convert to a string and print

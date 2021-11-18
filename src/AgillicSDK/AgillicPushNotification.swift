@@ -8,7 +8,7 @@
 import Foundation
 import SnowplowTracker
 
-public class AgillicPushNotification : AgillicEvent {
+internal class AgillicPushNotification : AgillicTrackingEvent {
     var screenId: String
     var screenName: String
     var type: String?
@@ -21,25 +21,19 @@ public class AgillicPushNotification : AgillicEvent {
         self.previousScreenId = previousScreenId
     }
     
-    func getSnowplowEvent() -> SPPushNotification? {
+    func getSPEvent() -> SPPushNotification? {
         let event = SPPushNotification.build({(builder : SPPushNotificationBuilder?) -> Void in
             builder!.setTrigger("PUSH") // can be "PUSH", "LOCATION", "CALENDAR", or "TIME_INTERVAL"
             builder!.setAction("action")
             builder!.setDeliveryDate("date")
             builder!.setCategoryIdentifier("category")
             builder!.setThreadIdentifier("thread")
-            // builder!.setNotification(content)
         })
         return event;
     }
-
-    public func trackAgillic(_ tracker: AgillicTracker) {
-        track(tracker.tracker)
-    }
-
+    
     public override func track(_ tracker: SPTracker) {
-        tracker.track(getSnowplowEvent())
-//        tracker.trackPushNotificationEvent(getSnowplowEvent())
+        tracker.track(getSPEvent())
     }
 
 }

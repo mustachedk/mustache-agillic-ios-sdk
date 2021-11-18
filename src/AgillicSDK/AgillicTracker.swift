@@ -16,7 +16,7 @@ public class AgillicTracker {
         self.tracker = tracker
     }
     
-    public func track(_ event : AgillicEvent) {
+    public func track(_ event : AgillicTrackingEvent) {
         if (enabled) {
             event.track(tracker)
         }

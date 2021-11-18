@@ -8,7 +8,7 @@
 import Foundation
 import SnowplowTracker
 
-public class AgillicAppViewEvent : AgillicEvent {
+public class AgillicAppView: AgillicTrackingEvent {
     var screenId: String
     var screenName: String
     var type: String?
@@ -21,7 +21,7 @@ public class AgillicAppViewEvent : AgillicEvent {
         self.previousScreenId = previousScreenId
     }
     
-    private func buildSnowplowEvent() -> SPScreenView? {
+    private func buildSPEvent() -> SPScreenView? {
         let event = SPScreenView.build({ (builder : SPScreenViewBuilder?) -> Void in
             builder!.setName(self.screenName)
             builder!.setScreenId(self.screenId)
@@ -32,7 +32,7 @@ public class AgillicAppViewEvent : AgillicEvent {
     }
 
     public override func track(_ tracker: SPTracker) {
-        tracker.track(buildSnowplowEvent())
+        tracker.track(buildSPEvent())
     }
 
 }

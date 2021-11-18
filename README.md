@@ -105,12 +105,18 @@ func application(_ application: UIApplication, didRegisterForRemoteNotifications
 Track recipient behavior with App View Tracking 
 
 ```swift
-    let appViewEvent = AgillicAppViewEvent(screenName: "app/landingpage")
-    Agillic.shared.tracker.track(appViewEvent)
+    let appView = AgillicAppView(screenName: "app://product-offers/21")
+    Agillic.shared.tracker.track(appView)
 ```
 
 The ``screenName`` is the value that can be matched in the Condition Editor.
-The suggested name convention to use some hierarchical ``app/sublevel-1/sublevel-2/...``
+The suggested name convention to use some hierarchical ``app://sublevel-1/sublevel-2/...``
+
+*Examples of usage:*
+``app://landingpage``
+``app://landingpage/sign-up/step-2`
+``app://dashboard/product-offers/21``
+``app://menu/profile/edit``
 
 ## Questions and Issues
 
