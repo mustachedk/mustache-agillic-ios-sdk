@@ -19,7 +19,7 @@ Other useful information:
 ## Installation
 
 See the subsections below for details about the different installation methods.
-* [Swift Package Manager](README.md#swift-package-manager)
+* [Swift Package Manager](README.md#swift-package-manager-(recommended))
 * [Import Manually](README.md#import-manually)
 
 ### Swift Package Manager (recommended)
@@ -28,13 +28,14 @@ Add a package by selecting `File` → `Add Packages…` in Xcode’s menu bar.
 
 Search for the Agillic iOS SDK using the repo's URL:
 ```console
-https://github.com/agillic/agillic-ios-sdk.git
+    https://github.com/agillic/agillic-ios-sdk.git
 ```
 
 For detailed documentaion on setting up the Agillic SDK with Swift Package Manger see: 
 [Swift Package Manager](docs/SwiftPackageManager.md)
 
-### Import Manually (not recommended)
+### Import Manually
+_NOTE: This is not the recommended method._ 
 
 * Download this repository by selecting `Code` → `Download ZIP`.
 * Open Downloads and locate ./src/AgillicSDK folder
@@ -53,13 +54,12 @@ You can configure your Agillic instance in code:
 
 See how to setup your Agillic Solution and obtain these values
 in the [Agillic Solution Setup Guide](docs/AgillicSolutionSetup.md).
-We recommend these values are passed down to the client on start of the application from an App Server instead of being hardcoded into the application.
 
 ### Initialize in app
 
-Start by importing the AgillicSDK Module into your AppDelegate Swift file
+Start by importing the AgillicSDK Module into your `AppDelegate.swift` file
 ```swift
-import AgillicSDK
+    import AgillicSDK
 ```
 
 Initialize and configure the Agillic SDK upon launch
@@ -67,24 +67,30 @@ Initialize and configure the Agillic SDK upon launch
 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
     Agillic.shared.configure(apiKey: "AGILLIC API KEY", apiSecret: "AGILLIC API SECRET", solutionId: "AGILLIC SOLUTION ID")
-
-    // Optionally you can set Logging level
-    Agillic.shared.logger.logLevel = .verbos
     return true
 }
 ```
 
 Your Agillic SDK instance is now ready for usage.
 
+### Logging
+Optionally you can enable logging for debug usage.
+```swift
+    Agillic.shared.logger.logLevel = .verbose
+}
+```
+
 ## Usage
 
 ### Register App Installation
 
 **Prerequisites**
-* You need to make sure to do this AFTER `Agillic.shared.configure().
-* You need to do this upon every launch before doing any [App View Tracking](README.md#app-view-tracking). Do this in your Sign Up/Sign In flow but also on you splash screen if users are automatically logged in with an Access Token.
+* You need to make sure to do this AFTER `Agillic.shared.configure()`.
+* You must do this upon every launch before doing any [App View Tracking](README.md#app-view-tracking). 
+* Register has to be done in your Sign Up/Sign In flow but also on you splash screen if users are automatically logged in with an Access Token.
 * ``RECIPIENT ID`` - Has to match `RECIPIENT.EMAIL` in the Agillic Recipient Table
 
+###### Register App Installation
 ```swift
     Agillic.shared.register(recipientId: "RECIPIENT ID")
 ```
@@ -95,8 +101,8 @@ Your Agillic SDK instance is now ready for usage.
 * Configure your app to be able to receive Push Notifications [Read this toturial](https://www.raywenderlich.com/11395893-push-notifications-tutorial-getting-started#)
 * Read the [Agillic Push Notification Setup](docs/AgillicPushNotificationSetup.md) document to learn how to send Push Potifications to your iOS application directly from your Agillic Solution.
 
-Request permission for for Remote Push Notifications in your App and obtain the Push Token from APNS
-_NOTE: This requires you to have already obtained the Recipient ID and stored across app sessoins - this is currently only supported for known recipients._
+* Request permission for Remote Push Notifications in your App and obtain the Push Token from APNS
+_NOTE: This requires you to have already obtained the Recipient ID and that you store this across app sessions - this is currently only supported for unknown recipients._
 
 ```swift
 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -114,6 +120,7 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
 }
 ```
 
+###### Register App Installation
 Read `deviceToken` and add it to your Agillic Recipient.
 ```swift
 func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
@@ -125,14 +132,17 @@ func application(_ application: UIApplication, didRegisterForRemoteNotifications
 }
 ```
 
-
 ### Track Push Opened 
 
-_NOTE: This is not fully documented and/or tested - this is due to change_
+_NOTE: Work in progress_
 
-```swift
-    Agillic.shared.handlePushNotificationOpened(userInfo: userInfo)
-```
+## Reading Push Notification sent from your Agillic
+
+_NOTE: Work in progress_
+
+## Handling deeplinking from Agillic
+
+_NOTE: Work in progress_
 
 ### App View Tracking
 
@@ -143,13 +153,13 @@ App View Tracking is typically located in your `UIViewController` file, but can 
 ```swift
 override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    let appView = AgillicAppView(screenName: "app://product-offers/21")
+    let appView = AgillicAppView(screenName: "app://sublevel-1/sublevel-2")
     Agillic.shared.tracker.track(appView)
 }
 ```
 
 The ``screenName`` is the value that can be matched in the Condition Editor.
-The suggested name convention to use some hierarchical:
+We suggest to use a hierarchical naming convention, prefixed with `app://` ex:
 * ``app://sublevel-1/sublevel-2/...``
 
 *Examples of usage:*
@@ -160,13 +170,7 @@ The suggested name convention to use some hierarchical:
 * ``app://product-offers/21``
 * ``app://menu/profile/edit``
 
-## Reading Push Notifications sent from your Agillic Solution
-
-_NOTE: Work in progress_
-
-## Handling deeplinking from Agillic
-
-_NOTE: Work in progress_
+_TODO: Usage in combination with 'Deeplinking' and 'Dynamic Links'_
 
 ## Questions and Issues
 
