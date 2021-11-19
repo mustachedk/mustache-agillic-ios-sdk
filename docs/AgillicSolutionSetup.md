@@ -10,7 +10,7 @@ the AgillicMobileSDK into your iOS application.
 
 To get started, login to your Agillic Solution and select **Settings** in the top right corner.
 
-<div align = "center"><img src="resources/solutionsetup1.png"></div>
+<div align = "center"><img src="resources/solutionsetup1.png" width="600"/></div>
 
 ## SDK Configuration
 
