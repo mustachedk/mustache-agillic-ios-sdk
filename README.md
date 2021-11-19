@@ -28,7 +28,7 @@ Add a package by selecting `File` → `Add Packages…` in Xcode’s menu bar.
 
 Search for the Agillic iOS SDK using the repo's URL:
 ```console
-    https://github.com/agillic/agillic-ios-sdk.git
+https://github.com/agillic/agillic-ios-sdk.git
 ```
 
 For detailed documentaion on setting up the Agillic SDK with Swift Package Manger see: 
@@ -59,7 +59,7 @@ in the [Agillic Solution Setup Guide](docs/AgillicSolutionSetup.md).
 
 Start by importing the AgillicSDK Module into your `AppDelegate.swift` file
 ```swift
-    import AgillicSDK
+import AgillicSDK
 ```
 
 Initialize and configure the Agillic SDK upon launch
@@ -76,8 +76,7 @@ Your Agillic SDK instance is now ready for usage.
 ### Logging
 Optionally you can enable logging for debug usage.
 ```swift
-    Agillic.shared.logger.logLevel = .verbose
-}
+Agillic.shared.logger.logLevel = .verbose
 ```
 
 ## Usage
@@ -92,7 +91,7 @@ Optionally you can enable logging for debug usage.
 
 ###### Register App Installation
 ```swift
-    Agillic.shared.register(recipientId: "RECIPIENT ID")
+Agillic.shared.register(recipientId: "RECIPIENT ID")
 ```
 
 ### Register Push Token
