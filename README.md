@@ -7,11 +7,10 @@ The SDK currently includes the following functionality:
  * Register a recipient token required to send a Push Notification to a device using Apple PN on iOS or Firebase Cloud Messaging for Android. When registered, this token will allow sending push notifications to recipients via the Agillic Dashboard.
  * Track recipient App Views. Tracking can be paused and resumed when requested by the user. Tracked events can be used to define [Target Groups](https://support.agillic.com/hc/en-gb/articles/360007001991-All-You-Need-to-Know-About-Target-Groups) in the Agillic Dashboard which can be used to direct targeted marketing and other communication.
 
-Read more about the Agillic Platform on the [official Agillic website](https://agillic.com).
-
-And in our [Developer portal](https://developers.agillic.com).
-
-Agillic SDK for Android can be found here: [Agillic Android SDK](https://github.com/mustachedk/mustache-agillic-android-sdk/)
+Other useful information:
+* Read more about the Agillic Platform on the [official Agillic website](https://agillic.com).
+* And in our [Developer portal](https://developers.agillic.com).
+* The Agillic SDK for Android can be found here: [Agillic Android SDK](https://github.com/mustachedk/mustache-agillic-android-sdk/)
 
 ## Requirements
 
@@ -81,10 +80,13 @@ Your Agillic SDK instance is now ready for usage.
 
 ### Register App Installation
 
-* ``RECIPIENT ID`` - Has to match RECIPIENT.EMAIL in the Agillic Recipient Table
+**Prerequisites**
+* You need to make sure to do this AFTER `Agillic.shared.configure().
+* You need to do this upon every launch before doing any [App View Tracking](README.md#app-view-tracking). Do this in your Sign Up/Sign In flow but also on you splash screen if users are automatically logged in with an Access Token.
+* ``RECIPIENT ID`` - Has to match `RECIPIENT.EMAIL` in the Agillic Recipient Table
 
 ```swift
-Agillic.shared.register(recipientId: "RECIPIENT ID")
+    Agillic.shared.register(recipientId: "RECIPIENT ID")
 ```
 
 ### Register Push Token
@@ -93,22 +95,26 @@ Agillic.shared.register(recipientId: "RECIPIENT ID")
 * Configure your app to be able to receive Push Notifications [Read this toturial](https://www.raywenderlich.com/11395893-push-notifications-tutorial-getting-started#)
 * Read the [Agillic Push Notification Setup](docs/AgillicPushNotificationSetup.md) document to learn how to send Push Potifications to your iOS application directly from your Agillic Solution.
 
-
 Request permission for for Remote Push Notifications in your App and obtain the Push Token from APNS
 _NOTE: This requires you to have already obtained the Recipient ID and stored across app sessoins - this is currently only supported for known recipients._
 
 ```swift
-UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-    if let error = error {
-        print("Error: \(error.localizedDescription)")
-    } else {
-        DispatchQueue.main.async {
-            application.registerForRemoteNotifications()
+func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+
+    UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+        if let error = error {
+            print("Error: \(error.localizedDescription)")
+        } else {
+            DispatchQueue.main.async {
+                application.registerForRemoteNotifications()
+            }
         }
     }
+    return true
 }
 ```
 
+Read `deviceToken` and add it to your Agillic Recipient.
 ```swift
 func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
     
@@ -119,40 +125,48 @@ func application(_ application: UIApplication, didRegisterForRemoteNotifications
 }
 ```
 
+
 ### Track Push Opened 
 
-TODO: Better documentation here.
+_NOTE: This is not fully documented and/or tested - this is due to change_
+
 ```swift
     Agillic.shared.handlePushNotificationOpened(userInfo: userInfo)
 ```
 
 ### App View Tracking
 
-Track recipient behavior with App View Tracking
+Track recipient behavior with App View Tracking.
+
+App View Tracking is typically located in your `UIViewController` file, but can be used elsewhere if needed.
 
 ```swift
+override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
     let appView = AgillicAppView(screenName: "app://product-offers/21")
     Agillic.shared.tracker.track(appView)
+}
 ```
 
 The ``screenName`` is the value that can be matched in the Condition Editor.
 The suggested name convention to use some hierarchical:
-
-``app://sublevel-1/sublevel-2/...``
+* ``app://sublevel-1/sublevel-2/...``
 
 *Examples of usage:*
-
-``app://landingpage``
-
-``app://landingpage/sign-up/step-2``
-
-``app://dashboard/product-offers/21``
-
-``app://menu/profile/edit``
+* ``app://landingpage``
+* ``app://landingpage/sign-up/step-2``
+* ``app://dashboard``
+* ``app://product-offers``
+* ``app://product-offers/21``
+* ``app://menu/profile/edit``
 
 ## Reading Push Notifications sent from your Agillic Solution
 
-TODO!
+_NOTE: Work in progress_
+
+## Handling deeplinking from Agillic
+
+_NOTE: Work in progress_
 
 ## Questions and Issues
 

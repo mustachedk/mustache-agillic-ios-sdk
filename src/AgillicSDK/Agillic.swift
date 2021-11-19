@@ -320,7 +320,7 @@ public class AgillicLogger {
             NSLog(msg)
         }
     }
-    
+
 }
 
 public enum AgillicLogLevel: Int, Comparable {
