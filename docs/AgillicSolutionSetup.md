@@ -21,8 +21,10 @@ Click **Push and SDK** in the left sidebar to view your staging and production s
 <div align = "center"><img src="resources/solutionsetup10.png"></div>
 
 Click **API** in the left sidebar to view or create a developer key and secret.
-The Developer Key is now your `apiKey` in the Agillic SDK
-The Secret is the `apiSecret` in the Agillic SDK
+
+Note the `Developer Key` is the `apiKey` in the Agillic SDK
+Note the `Secret` is the `apiSecret` in the Agillic SDK
+
 <div align = "center"><img src="resources/solutionsetup11.png"></div>
 
 ## Push Notifications
@@ -31,12 +33,14 @@ Next, select **Push and SDK** in the left pane Menu, under **Integrations** and 
 
 <div align = "center"><img src="resources/solutionsetup2.png"></div>
 
-**Enter application name** 
+**Enter application name**
+
 This is the name of your application (typically what it says in the AppStore)
 
 <div align = "center"><img src="resources/solutionsetup3.png"></div>
 
 **Enter Client Application id** 
+
 This has to correspond to the Bundle identifier of your iOS application (**VERY IMPORTANT**)
 
 <div align = "center"><img src="resources/solutionsetup4.png"></div>

@@ -24,7 +24,7 @@ See the subsections below for details about the different installation methods.
 * [Swift Package Manager](README.md#swift-package-manager)
 * [Import Manually](README.md#import-manually)
 
-### Swift Package Manager
+### Swift Package Manager (recommended)
 
 Add a package by selecting `File` → `Add Packages…` in Xcode’s menu bar.
 
@@ -36,7 +36,7 @@ https://github.com/agillic/agillic-ios-sdk.git
 For detailed documentaion on setting up the Agillic SDK with Swift Package Manger see: 
 [Swift Package Manager](docs/SwiftPackageManager.md)
 
-### Import Manually
+### Import Manually (not recommended)
 
 * Download this repository by selecting `Code` → `Download ZIP`.
 * Open Downloads and locate ./src/AgillicSDK folder
@@ -116,7 +116,9 @@ Track recipient behavior with App View Tracking
 ```
 
 The ``screenName`` is the value that can be matched in the Condition Editor.
-The suggested name convention to use some hierarchical ``app://sublevel-1/sublevel-2/...``
+The suggested name convention to use some hierarchical:
+
+``app://sublevel-1/sublevel-2/...``
 
 *Examples of usage:*
 

@@ -32,6 +32,7 @@ public class AgillicAppView: AgillicTrackingEvent {
     }
 
     public override func track(_ tracker: SPTracker) {
+        Agillic.shared.logger.log("[Agillic] App View Tracking: \(self.screenName)", level: .debug)
         tracker.track(buildSPEvent())
     }
 
