@@ -8,11 +8,10 @@ The SDK currently includes the following functionality:
  * Track recipient App Views. Tracking can be paused and resumed when requested by the user. Tracked events can be used to define [Target Groups](https://support.agillic.com/hc/en-gb/articles/360007001991-All-You-Need-to-Know-About-Target-Groups) in the Agillic Dashboard which can be used to direct targeted marketing and other communication.
 
 Read more about the Agillic Platform on the [official Agillic website](https://agillic.com).
+
 And in our [Developer portal](https://developers.agillic.com).
 
-
-Agillic SDK for Android can be found here: 
-
+Agillic SDK for Android can be found here: [Agillic Android SDK](https://github.com/mustachedk/mustache-agillic-android-sdk/)
 
 ## Requirements
 
@@ -53,8 +52,9 @@ You can configure your Agillic instance in code:
 * ``AGILLIC API SECRET``
 * ``AGILLIC SOLUTION ID``
 
-See how to setup your Agillic Solution and obtain these values 
-in the [Agillic Solution Setup Guide](docs/AgillicSolutionSetup.md)
+See how to setup your Agillic Solution and obtain these values
+in the [Agillic Solution Setup Guide](docs/AgillicSolutionSetup.md).
+We recommend these values are passed down to the client on start of the application from an App Server instead of being hardcoded into the application.
 
 ### Initialize in app
 
@@ -68,9 +68,11 @@ Initialize and configure the Agillic SDK upon launch
 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
     Agillic.shared.configure(apiKey: "AGILLIC API KEY", apiSecret: "AGILLIC API SECRET", solutionId: "AGILLIC SOLUTION ID")
+
+    // Optionally you can set Logging level
+    Agillic.shared.logger.logLevel = .verbos
     return true
 }
-    
 ```
 
 Your Agillic SDK instance is now ready for usage.
@@ -87,8 +89,25 @@ Agillic.shared.register(recipientId: "RECIPIENT ID")
 
 ### Register Push Token
 
-Register for Remote Push Notifications in your App, like you used to and implement this in your AppDelegate.
+**Prerequisites**
+* Configure your app to be able to receive Push Notifications [Read this toturial](https://www.raywenderlich.com/11395893-push-notifications-tutorial-getting-started#)
+* Read the [Agillic Push Notification Setup](docs/AgillicPushNotificationSetup.md) document to learn how to send Push Potifications to your iOS application directly from your Agillic Solution.
+
+
+Request permission for for Remote Push Notifications in your App and obtain the Push Token from APNS
 _NOTE: This requires you to have already obtained the Recipient ID and stored across app sessoins - this is currently only supported for known recipients._
+
+```swift
+UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+    } else {
+        DispatchQueue.main.async {
+            application.registerForRemoteNotifications()
+        }
+    }
+}
+```
 
 ```swift
 func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
@@ -102,6 +121,7 @@ func application(_ application: UIApplication, didRegisterForRemoteNotifications
 
 ### Track Push Opened 
 
+TODO: Better documentation here.
 ```swift
     Agillic.shared.handlePushNotificationOpened(userInfo: userInfo)
 ```
@@ -129,6 +149,10 @@ The suggested name convention to use some hierarchical:
 ``app://dashboard/product-offers/21``
 
 ``app://menu/profile/edit``
+
+## Reading Push Notifications sent from your Agillic Solution
+
+TODO!
 
 ## Questions and Issues
 
