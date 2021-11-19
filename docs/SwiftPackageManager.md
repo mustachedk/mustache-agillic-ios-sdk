@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Starting with the 1.0.0 release, Agillic SDK for iOS officially supports installation via [Swift
+Starting with the 0.7.0 release, Agillic SDK for iOS officially supports installation via [Swift
 Package Manager](https://swift.org/package-manager/).
 
 ## Requirements
@@ -25,7 +25,7 @@ Search for the Agillic iOS SDK using the repo's URL:
 https://github.com/agillic/agillic-ios-sdk.git
 ```
 
-Next, set the **Dependency Rule** to be `Up to Next Major Version` and specify `1.0.0` as the lower bound.
+Next, set the **Dependency Rule** to be `Up to Next Major Version` and specify `0.0.0` as the lower bound.
 
 Then, select **Add Package**.
 
