@@ -10,7 +10,7 @@ The SDK currently includes the following functionality:
 Other useful information:
 * Read more about the Agillic Platform on the [official Agillic website](https://agillic.com).
 * And in our [Developer portal](https://developers.agillic.com).
-* The Agillic SDK for Android can be found here: [Agillic Android SDK](https://github.com/mustachedk/mustache-agillic-android-sdk/)
+* The Agillic SDK for Android can be found here: [Agillic Android SDK](https://github.com/agillic/agillic-android-sdk/)
 
 ## Requirements
 
